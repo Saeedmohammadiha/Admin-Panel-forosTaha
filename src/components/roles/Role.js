@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router";
 import { Link } from "react-router-dom";
 import { override } from "../../css/override";
 import Sidebar from "../Sidebar";
@@ -13,6 +14,7 @@ import SearchInput from "./SearchInput";
 import { errorsCatch } from "../login/errorsCatch";
 
 const Role = () => {
+    const navigate = useNavigate()
     let [loading, setLoading] = useState(true);
     let [tableLoading, settableLoading] = useState(false);
     const [items, setItems] = useState("");
@@ -53,12 +55,12 @@ const Role = () => {
                 setTotalPage(response.data.data.data.total);
                 setLoading(false);
                 settableLoading(false);
-                const items = data.map((item) => {
+                const items = data?.map((item) => {
                     return (
                       <tr key={item.id}>
-                        <td scope="row">{item.name}</td>
-                        <td scope="row">{item.label}</td>
-                        <td scope="row" className="text-left">
+                        <td>{item.name}</td>
+                        <td>{item.label}</td>
+                        <td className="text-left">
                           <button
                             id={item.id}
                             className="btn btn btn-outline-danger m-1 my-2 my-sm-0"
@@ -81,11 +83,12 @@ const Role = () => {
             })
             .catch((err) => {
                 console.log(err);
-                if (err.response.status == 401) {
-                    window.location.href = '/'
+                if (err.response.status === 401) {
+                    localStorage.clear()
+                    navigate('/')
                 }
-                if (err.response.status == 403) {
-                    window.location.href = '/FourOThree'
+                if (err.response.status === 403) {
+                    navigate('/FourOThree') 
                 }
             });
     }, [curentPage, searchItem]);
@@ -156,7 +159,7 @@ const Role = () => {
                                 text: "گزینه انتخابی شما پاک شد ",
                                 icon: "success",
                             }).then((response) => {
-                                window.location.pathname = "/role";
+                                navigate("/role") ;
                             });
                         })
                         .catch((err) => {
@@ -219,7 +222,7 @@ const Role = () => {
                                 </Link>
                             </nav>
 
-                            <div className="container m-auto">
+                            <div className=" m-auto">
                                 <h2 className="text-center mt-3"> نقش ها </h2>
                                 <table className="table  table-hover rounded shadow text-right ">
                                     <tbody>
@@ -231,7 +234,7 @@ const Role = () => {
                                             </th>
                                         </tr>
                                         {tableLoading ? (
-                                            <tr scope="row">
+                                            <tr>
                                                 <td colspan="2">
                                                     <BeatLoader
                                                         color="gray"

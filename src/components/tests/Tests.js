@@ -65,19 +65,19 @@ const Tests = () => {
         setLoading(false);
         settableLoading(false);
 
-        const items = data.map((item) => {
+        const items = data?.map((item) => {
           return (
             <tr key={item.id}>
-              <td scope="row">{item.name}</td>
-              <td scope="row">{item.field.name}</td>
-              <td scope="row">{item.base.name}</td>
-              <td scope="row">{item.type == 1 ? " جامع" : "تک درس"}</td>
-              <td scope="row">{item.users == 1 ? "تضمینی" : "اشتراکی"}</td>
-              <td scope="row">
+              <td>{item.name}</td>
+              <td>{item.field.name}</td>
+              <td>{item.base.name}</td>
+              <td>{item.type === 1 ? " جامع" : "تک درس"}</td>
+              <td>{item.users === 1 ? "تضمینی" : "اشتراکی"}</td>
+              <td>
                 <Switch
                   id={item.id}
                   onChange={() => {
-                    const condition = item.status == 1 ? 0 : 1;
+                    const condition = item.status === 1 ? 0 : 1;
                     baseUrl
                       .post("/api/v1/tests/change-status", {
                         id: item.id,
@@ -97,11 +97,11 @@ const Tests = () => {
                         errorsCatch(err.response.data);
                       });
                   }}
-                  checked={item.status == 1 ? true : false}
+                  checked={item.status === 1 ? true : false}
                 />
               </td>
 
-              <td scope="row" className="text-left">
+              <td className="text-left">
                 <button
                   id={item.id}
                   className="btn btn btn-outline-danger m-1 my-2 my-sm-0"
@@ -124,11 +124,12 @@ const Tests = () => {
       })
       .catch((err) => {
         console.log(err);
-        if (err.response.status == 401) {
-          window.location.href = '/'
+        if (err.response.status === 401) {
+          localStorage.clear()
+          navigate('/')
         }
-        if (err.response.status == 403) {
-          window.location.href = '/FourOThree'
+        if (err.response.status === 403) {
+         navigate('/FourOThree') 
         }
       });
   }, [curentPage, searchItem, toggle, vipValue, typeQuizzesValue]);
@@ -257,7 +258,7 @@ const Tests = () => {
                 text: "گزینه انتخابی شما پاک شد ",
                 icon: "success",
               }).then((response) => {
-                window.location.pathname = "/tests";
+                navigate("/tests") ;
               });
             })
             .catch((err) => {
@@ -350,7 +351,7 @@ const Tests = () => {
                 </Link>
               </nav>
 
-              <div className="container m-auto">
+              <div className=" m-auto">
                 <h2 className="text-center mt-3">آزمون ها</h2>
                 <table className="table  table-hover rounded shadow text-right ">
                   <tbody>
@@ -377,7 +378,7 @@ const Tests = () => {
                       </th>
                     </tr>
                     {tableLoading ? (
-                      <tr scope="row">
+                      <tr>
                         <td colspan="2">
                           <BeatLoader
                             color="gray"

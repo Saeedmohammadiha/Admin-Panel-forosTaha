@@ -8,8 +8,10 @@ import Sidebar from '../Sidebar'
 import Navbar from '../Navbar'
 import { baseUrl } from "../../baseUrl";
 import { errorsCatch } from "../login/errorsCatch";
+import { useNavigate } from "react-router";
 
 const AddPermission = () => {
+  const navigate = useNavigate()
   const [inputText, setInputText] = useState("");
   const [label, setLabel] = useState("");
   const [loading, setLoading] = useState(false);
@@ -59,7 +61,7 @@ const AddPermission = () => {
             icon: "success",
           }).then((response) => {
             setLoading(true);
-            setTimeout((window.location.pathname = "/permission"), 2000);
+            setTimeout(navigate("/permission"), 2000);
           });
         })
         .catch((err) => {

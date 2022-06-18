@@ -1,7 +1,8 @@
-import React, { useEffect } from "react";
-import { Link } from "react-router-dom";
-import "react-pro-sidebar/dist/css/styles.css";
-import avatar from '../imgs/avatar.png'
+import React from 'react';
+import { Navigate, useNavigate } from 'react-router';
+import { Link } from 'react-router-dom';
+import 'react-pro-sidebar/dist/css/styles.css';
+import avatar from '../imgs/avatar.png';
 import {
   ProSidebar,
   SidebarHeader,
@@ -10,19 +11,18 @@ import {
   Menu,
   MenuItem,
   SubMenu,
-} from "react-pro-sidebar";
-import { baseUrl } from "../baseUrl";
+} from 'react-pro-sidebar';
+import { baseUrl } from '../baseUrl';
 
 const Sidebar = ({ collapse, toggled, handleToggleSidebar }) => {
-  const user = JSON.parse(localStorage.getItem("user"));
+  const navigate = useNavigate()
+  const user = JSON.parse(localStorage.getItem('user'));
   const delete_cookie = (name) => {
-    document.cookie = name + "=" +
-
-      ";expires=Thu, 01 Jan 1970 00:00:01 GMT";
-  }
+    document.cookie = name + '=' + ';expires=Thu, 01 Jan 1970 00:00:01 GMT';
+  };
 
   if (!user) {
-    window.location.href = '/'
+    return <Navigate to={'/'} />
   }
   return (
     <div className=" sticky-right">
@@ -35,7 +35,7 @@ const Sidebar = ({ collapse, toggled, handleToggleSidebar }) => {
       >
         <SidebarHeader>
           <div className="text-right">
-            <h5 className={`p-3 ${collapse ? "d-none" : ""}`}>
+            <h5 className={`p-3 ${collapse ? 'd-none' : ''}`}>
               پنل ادمین فاروس
             </h5>
             <div className="dropdown-divider"></div>
@@ -44,14 +44,15 @@ const Sidebar = ({ collapse, toggled, handleToggleSidebar }) => {
                 <img
                   src={avatar}
                   className="rounded-circle w-100"
-                  alt="User Image"
+                  alt="UserImage"
                 />
               </div>
               <div
-                className={`p-3 info mt-2 text-white ${collapse ? "d-none" : ""
-                  }`}
+                className={`p-3 info mt-2 text-white ${
+                  collapse ? 'd-none' : ''
+                }`}
               >
-                <a href="#" className="d-block">
+                <a href="/#" className="d-block">
                   {user ? user.name : null} {user ? user.family : null}
                 </a>
                 خوش آمدید
@@ -65,6 +66,10 @@ const Sidebar = ({ collapse, toggled, handleToggleSidebar }) => {
               داشبورد
               <Link to="/dashboard" />
             </MenuItem>
+            <MenuItem icon={<i className="fa fa-user"></i>}>
+              دانش پذیران
+              <Link to="/students" />
+            </MenuItem>
             <SubMenu
               icon={<i className="fas fa-question-circle"></i>}
               title="سوالات"
@@ -74,50 +79,64 @@ const Sidebar = ({ collapse, toggled, handleToggleSidebar }) => {
                 <Link to="/questions" />
               </MenuItem>
             </SubMenu>
+
             <SubMenu icon={<i className="fas fa-edit"></i>} title="آزمون ها">
               <MenuItem icon={<i className="fas fa-cubes ic-list"></i>}>
                 بانک آزمون ها
                 <Link to="/tests" />
               </MenuItem>
+              <MenuItem icon={<i className="fas fa-edit"></i>}>
+                گام ها
+                <Link to="/steps" />
+              </MenuItem>
             </SubMenu>
-            <SubMenu
-              icon={<i className="fas fa-book"></i>}
-              title="سایت"
-            >
+            <SubMenu icon={<i className="fas fa-book"></i>} title="سایت">
               <MenuItem icon={<i className="fas fa-bolt ic-list"></i>}>
                 منو اصلی
-                <Link to="/site/menu" />
+                <Link to="/menu" />
               </MenuItem>
               <MenuItem icon={<i className="fas fa-book"></i>}>
                 دسته بندی
-                <Link to="/site/category" />
+                <Link to="/category" />
               </MenuItem>
               <MenuItem icon={<i className="fas fa-hands-helping"></i>}>
                 برچسب ها
-                <Link to="/site/tag" />
+                <Link to="/tag" />
               </MenuItem>
               <MenuItem icon={<i className="fas fa-table ic-list"></i>}>
                 مقالات
-                <Link to="/site/articles" />
+                <Link to="/articles" />
+              </MenuItem>
+              <MenuItem icon={<i className="fas fa-university ic-list"></i>}>
+                اساتید
+                <Link to="/teachers" />
+              </MenuItem>
+              <MenuItem icon={<i className="fas fa-edit"></i>}>
+                کتاب ها
+                <Link to="/volume" />
+              </MenuItem>
+              <MenuItem icon={<i className="fas fa-globe ic-list"></i>}>
+                سرویس ها
+                <Link to="/service" />
+              </MenuItem>
+              <MenuItem icon={<i className="fas fa-book"></i>}>
+                طرح شبه تضمینی
+                <Link to="/guaranteed" />
               </MenuItem>
             </SubMenu>
-            <SubMenu
-              icon={<i className="fas fa-book"></i>}
-              title="دسترسی "
-            >
+            <SubMenu icon={<i className="fas fa-book"></i>} title="دسترسی ">
               <MenuItem icon={<i className="fas fa-book ic-list"></i>}>
-                 دسترسی ها
-                <Link to="/Permission" />
+                دسترسی ها
+                <Link to="/permission" />
               </MenuItem>
               <MenuItem icon={<i className="fas fa-book ic-list"></i>}>
-                 نقش ها
+                نقش ها
                 <Link to="/role" />
               </MenuItem>
               <MenuItem icon={<i className="fas fa-university ic-list"></i>}>
-                 ادمین ها
+                ادمین ها
                 <Link to="/admin" />
               </MenuItem>
-
             </SubMenu>
             <SubMenu
               icon={<i className="fas fa-cubes"></i>}
@@ -148,23 +167,38 @@ const Sidebar = ({ collapse, toggled, handleToggleSidebar }) => {
                 <Link to="/levels" />
               </MenuItem>
             </SubMenu>
+            <SubMenu
+              icon={<i className="fas fa-university ic-list"></i>}
+              title="تنظیمات"
+            >
+              <MenuItem icon={<i className="fas fa-globe ic-list"></i>}>
+                اشتراک ها
+                <Link to="/pay" />
+              </MenuItem>
+              <MenuItem icon={<i className="fas fa-question-circle"></i>}>
+                درباره ما
+                <Link to="/about_us" />
+              </MenuItem>
+            </SubMenu>
           </Menu>
         </SidebarContent>
         <SidebarFooter>
           <Menu>
             <MenuItem
               onClick={() => {
-                baseUrl.post('/api/v1/admin/logout').then((res) => {
-                  localStorage.removeItem("user");
-                  localStorage.removeItem("token");
-                  delete_cookie('XSRF-TOKEN')
-                  delete_cookie('laravel_session')
-                  window.location.href = '/'
-                }).catch((err) => {
-                  window.alert('خطای سرور')
-                })
-              }
-              }
+                baseUrl
+                  .post('/api/v1/admin/logout')
+                  .then((res) => {
+                    localStorage.removeItem('user');
+                    localStorage.removeItem('token');
+                    delete_cookie('XSRF-TOKEN');
+                    delete_cookie('laravel_session');
+                    navigate('/') 
+                  })
+                  .catch((err) => {
+                    window.alert('خطای سرور');
+                  });
+              }}
               icon={<i className="fas fa-sign-out-alt"></i>}
             >
               خروج

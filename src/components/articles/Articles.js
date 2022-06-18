@@ -93,14 +93,15 @@ const Articles = () => {
                 // const myDate = new Date(arguments);
                 return (
                     <tr key={row.id}>
-                        <td scope="row"><a href={response.data.data.url + "/" + row.slug} >{row.title}</a></td>
-                        <td scope="row">{row.admin.name} {row.admin.family}</td>
-                        <td scope="row">{moment(row.created_at).format('jYYYY/jMM/jDD')}</td>
-                        <td scope="row">
+                        <td ><a href={response.data.data.url + "/" + row.slug} >{row.title}</a></td>
+                        <td >{row.view}</td>
+                        <td >{row.admin.name} {row.admin.family}</td>
+                        <td >{moment(row.created_at).format('jYYYY/jMM/jDD')}</td>
+                        <td >
                             <Switch
                                 id={row.id}
                                 onChange={() => {
-                                    const condition = row.status == 1 ? 0 : 1;
+                                    const condition = row.status === 1 ? 0 : 1;
                                     baseUrl
                                         .put("/api/v1/article/change-published-article", {
                                             article_id: row.id,
@@ -120,14 +121,14 @@ const Articles = () => {
                                             errorsCatch(err.response.data);
                                         });
                                 }}
-                                checked={row.status == 1 ? true : false}
+                                checked={row.status === 1 ? true : false}
                             />
                         </td>
-                        <td scope="row">
+                        <td>
                             <Switch
                                 id={row.id}
                                 onChange={() => {
-                                    const condition = row.main == 1 ? 0 : 1;
+                                    const condition = row.main === 1 ? 0 : 1;
                                     baseUrl
                                         .put("/api/v1/article/change-main-page-article", {
                                             article_id: row.id,
@@ -147,10 +148,10 @@ const Articles = () => {
                                             errorsCatch(err.response.data);
                                         });
                                 }}
-                                checked={row.main == 1 ? true : false}
+                                checked={row.main === 1 ? true : false}
                             />
                         </td>
-                        <td scope="row" className="text-left">
+                        <td  className="text-left">
                             <button
                                 id={row.id}
                                 className="btn btn btn-outline-danger m-1 my-2 my-sm-0"
@@ -160,7 +161,7 @@ const Articles = () => {
                             </button>
                             <Link
                                 id={row.id}
-                                to={`/site/articles/edit/${row.id}`}
+                                to={`/articles/edit/${row.id}`}
                                 className="btn btn btn-outline-warning m-1 my-2 my-sm-0"
                             >
                                 ویرایش
@@ -172,11 +173,12 @@ const Articles = () => {
             setItems(myTable)
             setLoading(false)
         }).catch((err) => {
-            if (err.response.status == 401) {
-                window.location.href = '/'
+            if (err.response.status === 401) {
+                localStorage.clear()
+                navigate('/') 
             }
-            if (err.response.status == 403) {
-                window.location.href = '/FourOThree'
+            if (err.response.status === 403) {
+                navigate('/FourOThree') 
             }
         })
     }, [searchItem, curentPage, toggle, mainToggle, publishValue, firstPageValue])
@@ -233,7 +235,7 @@ const Articles = () => {
                                 text: "گزینه انتخابی شما پاک شد ",
                                 icon: "success",
                             }).then((response) => {
-                                window.location.pathname = "/site/articles";
+                                navigate("/articles") ;
                             });
                         })
                         .catch((err) => {
@@ -335,7 +337,7 @@ const Articles = () => {
                                             />
                                         </div>
                                     <Link
-                                        to={"/site/articles/add"}
+                                        to={"/articles/add"}
                                         className="btn btn-outline-success  my-2 my-sm-0"
                                         type="button"
                                     >
@@ -349,6 +351,7 @@ const Articles = () => {
                                         <tbody>
                                             <tr>
                                                 <th scope="row"> نام و لینک </th>
+                                                <th scope="row">  بازدید  </th>
                                                 <th scope="row"> نام نویسنده </th>
                                                 <th scope="row">  تاریخ انتشار  </th>
                                                 <th scope="row"> انتشار </th>
@@ -358,7 +361,7 @@ const Articles = () => {
                                                 </th>
                                             </tr>
                                             {tableLoading ? (
-                                                <tr scope="row">
+                                                <tr>
                                                     <td colSpan="7">
                                                         <BeatLoader
                                                             color="gray"

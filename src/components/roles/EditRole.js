@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { override } from "../../css/override";
 import BeatLoader from "react-spinners/BeatLoader";
 import { css } from "@emotion/react";
@@ -12,6 +12,7 @@ import { baseUrl } from "../../baseUrl";
 import { errorsCatch } from "../login/errorsCatch";
 
 const EditRole = () => {
+    const navigate = useNavigate()
     const params = useParams();
     const [inputText, setInputText] = useState();
     const [label, setLabel] = useState("");
@@ -45,7 +46,7 @@ const EditRole = () => {
                 console.log(response);
                 setInputText(response.data.data.data.name);
                 setLabel(response.data.data.data.label)
-                const permissions = response.data.data.data.permission.map((permission)=>{
+                const permissions = response.data.data.data.permission?.map((permission)=>{
                     return {value: permission.id , label : permission.name}
                 })
                 setSelectedOption(permissions)
@@ -53,11 +54,11 @@ const EditRole = () => {
             })
             .catch((err) => {
                 console.log(err.response);
-                if (err.response.status == 401) {
-                    window.location.href = '/'
+                if (err.response.status === 401) {
+                    navigate('/')
                 }
-                if (err.response.status == 403) {
-                    window.location.href = '/FourOThree'
+                if (err.response.status === 403) {
+                    navigate('/FourOThree') 
                 }
             });
     }, []);
@@ -69,18 +70,19 @@ const EditRole = () => {
         baseUrl
             .get("/api/v1/role/create")
             .then((response) => {
-                const options = response.data.data.data.map((option) => {
+                const options = response.data.data.data?.map((option) => {
                     return { value: option.id, label: option.name };
                 });
                 setPermissionOption(options);
             })
             .catch((err) => {
                 console.log(err);
-                if (err.response.status == 401) {
-                    window.location.href = '/'
+                if (err.response.status === 401) {
+                    localStorage.clear()
+                    navigate('/')
                 }
-                if (err.response.status == 403) {
-                    window.location.href = '/FourOThree'
+                if (err.response.status === 403) {
+                    navigate('/FourOThree') 
                 }
             });
     }, []);
@@ -114,7 +116,7 @@ const EditRole = () => {
                 setButLoading(false)
             })
         } else {
-            const permissions = selectedOption.map((permission) => {
+            const permissions = selectedOption?.map((permission) => {
                 return permission.value
             })
             baseUrl
@@ -129,7 +131,7 @@ const EditRole = () => {
                         title: "ویرایش شد ",
                         icon: "success",
                     }).then((response) => {
-                        setTimeout((window.location.pathname = "/role"), 1000);
+                        setTimeout(navigate("/role"), 1000);
                     });
                 })
                 .catch((err) => {

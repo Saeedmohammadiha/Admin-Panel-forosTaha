@@ -1,19 +1,21 @@
-import React, { useState, useEffect } from "react";
-import Select from "react-select";
-import Sidebar from "../Sidebar";
-import Navbar from "../Navbar";
-import { errorsCatch } from "../login/errorsCatch";
-import { baseUrl } from "../../baseUrl";
-import "../../css/fileInput.css";
-import BeatLoader from "react-spinners/BeatLoader";
-import { css } from "@emotion/react";
-import { override } from "../../css/override";
-import DatePicker from "react-multi-date-picker";
-import persian from "react-date-object/calendars/persian";
-import persian_fa from "react-date-object/locales/persian_fa";
-import transition from "react-element-popper/animations/transition";
-import opacity from "react-element-popper/animations/opacity";
+import React, { useState, useEffect } from 'react';
+import Select from 'react-select';
+import Sidebar from '../Sidebar';
+import Navbar from '../Navbar';
+import { errorsCatch } from '../login/errorsCatch';
+import { baseUrl } from '../../baseUrl';
+import '../../css/fileInput.css';
+import BeatLoader from 'react-spinners/BeatLoader';
+import { css } from '@emotion/react';
+import { override } from '../../css/override';
+import DatePicker from 'react-multi-date-picker';
+import persian from 'react-date-object/calendars/persian';
+import persian_fa from 'react-date-object/locales/persian_fa';
+import transition from 'react-element-popper/animations/transition';
+import opacity from 'react-element-popper/animations/opacity';
+import { useNavigate } from 'react-router';
 const AddTests = () => {
+  const navigate = useNavigate()
   let [loading, setLoading] = useState(false);
   const [baseOptions, setBaseOptions] = useState([]);
   const [fieldOptions, setFieldOptions] = useState([]);
@@ -21,7 +23,6 @@ const AddTests = () => {
   const [name, setName] = useState();
   const [capacity, setCapacity] = useState();
   const [date, setDate] = useState();
-  const [step, setStep] = useState();
   const [description, setDescription] = useState();
   const [selectedKindOption, setSelectedKindOption] = useState();
   const [selectedstepOption, setSelectedstepOption] = useState();
@@ -34,13 +35,14 @@ const AddTests = () => {
   const [inputQuestionValue, setInputQuestionValue] = useState();
   const [selectedQuestionOption, setSelectedquestionOption] = useState();
   const [questionOption, setQuestionOption] = useState();
+  const [stepOptions, setStepOptions] = useState();
 
   const [errorShow, setErrorShow] = useState(false);
-  const [butLoading, setButLoading] = useState(false)
+  const [butLoading, setButLoading] = useState(false);
 
   const butOverride = css`
-  display: block;
-  text-align: center;
+    display: block;
+    text-align: center;
   `;
 
   /**
@@ -53,43 +55,38 @@ const AddTests = () => {
     setToggled(value);
   };
 
-
   const kindOptions = [
-    { value: 1, label: "جامع" },
-    { value: 2, label: "تک درس" },
+    { value: 1, label: 'جامع' },
+    { value: 2, label: 'تک درس' },
   ];
   const haseDateOptions = [
-    { value: 1, label: "ندارد" },
-    { value: 2, label: "دارد" },
+    { value: 1, label: 'ندارد' },
+    { value: 2, label: 'دارد' },
   ];
   const usersOptions = [
-    { value: 1, label: "تضمینی " },
-    { value: 2, label: "اشتراکی" },
+    { value: 1, label: 'تضمینی ' },
+    { value: 2, label: 'اشتراکی' },
   ];
-  const stepOptions = [
-    { value: 1, label: "گام اول" },
-    { value: 2, label: "گام دوم" },
-    { value: 3, label: "گام سوم" },
-    { value: 4, label: "گام چهارم" },
-    { value: 5, label: "گام پنجم" },
-    { value: 6, label: "گام ششم" },
-  ];
+
   /**
    * getting the options of the selects from server
    *
    */
   useEffect(() => {
     baseUrl
-      .get("/api/v1/tests/create")
+      .get('/api/v1/tests/create')
       .then((response) => {
         const base = response.data.data.base;
-        const baseOption = base.map((baseitem) => {
+        const baseOption = base?.map((baseitem) => {
           return { value: baseitem.id, label: baseitem.name };
         });
         setBaseOptions(baseOption);
-
+        const steps = response.data.data.steps.map((step) => {
+          return { value: step.id, label: step.title };
+        });
+        setStepOptions(steps);
         const field = response.data.data.field;
-        const fieldOption = field.map((fielditem) => {
+        const fieldOption = field?.map((fielditem) => {
           return { value: fielditem.id, label: fielditem.name };
         });
         setFieldOptions(fieldOption);
@@ -97,6 +94,13 @@ const AddTests = () => {
       })
       .catch((err) => {
         console.log(err.response);
+        if (err.response.status === 401) {
+          localStorage.clear()
+          navigate('/')
+        }
+        if (err.response.status === 403) {
+          navigate('/FourOThree') ;
+        }
       });
   }, []);
 
@@ -164,8 +168,8 @@ const AddTests = () => {
    */
   const handleSubmit = (e) => {
     e.preventDefault();
-    setButLoading(true)
-    const questionIds = selectedQuestionOption.map((option) => {
+    setButLoading(true);
+    const questionIds = selectedQuestionOption?.map((option) => {
       return option.value;
     });
     if (
@@ -176,7 +180,7 @@ const AddTests = () => {
         duration &&
         selectedUsersOption &&
         selectedKindOption &&
-        selectedHasDateOption.value == 1) ||
+        selectedHasDateOption.value === 1) ||
       (selectedBaseOption &&
         selectedFieldOption &&
         name &&
@@ -188,11 +192,13 @@ const AddTests = () => {
     ) {
       setErrorShow(false);
       setLoading(true);
+       
+      
       baseUrl
-        .post("/api/v1/tests", {
+        .post('/api/v1/tests', {
           name: name,
           description: description,
-          step: selectedstepOption.value,
+          step_id: selectedUsersOption.value===2 ? '' : selectedstepOption.value,
           type: selectedKindOption.value,
           users: selectedUsersOption.value,
           time: duration,
@@ -204,17 +210,16 @@ const AddTests = () => {
           questions_id: questionIds,
         })
         .then((response) => {
-          window.location.pathname = "/tests";
+          navigate('/tests') ;
         })
         .catch((err) => {
           errorsCatch(err.response.data);
           setLoading(false);
-          setButLoading(false)
+          setButLoading(false);
         });
     } else {
       setErrorShow(true);
-      setButLoading(false)
-
+      setButLoading(false);
     }
   };
 
@@ -247,7 +252,7 @@ const AddTests = () => {
                 toggled={toggled}
                 setToggled={setToggled}
               />
-              <h5 className="text-right mb-2">افزودن آزمون</h5>
+              <h5 className="text-center mb-2">افزودن آزمون</h5>
               <div className="col-12 h-100 p-4 light rounded shadow bg-light">
                 <div className="form-container">
                   <form onSubmit={handleSubmit}>
@@ -328,10 +333,11 @@ const AddTests = () => {
                         onChange={handleChangeHaseDate}
                       />
                       <div
-                        className={`col-12 ${selectedHasDateOption.value == 2
-                          ? "d-block"
-                          : "d-none"
-                          } mt-3`}
+                        className={`col-12 ${
+                          selectedHasDateOption.value === 2
+                            ? 'd-block'
+                            : 'd-none'
+                        } mt-3`}
                       >
                         <DatePicker
                           value={date}
@@ -345,7 +351,7 @@ const AddTests = () => {
                             transition({
                               from: 40,
                               transition:
-                                "all 400ms cubic-bezier(0.335, 0.010, 0.030, 1.360)",
+                                'all 400ms cubic-bezier(0.335, 0.010, 0.030, 1.360)',
                             }),
                           ]}
                         />
@@ -363,19 +369,20 @@ const AddTests = () => {
                         classNamePrefix="select"
                         onChange={handleChangeUsers}
                       />
-                      <label className="mt-2" forhtml="fields">
-                        گام:
-                      </label>
-                      <Select
-                        options={stepOptions}
-                        placeholder=" گام"
-                        name="step"
-                        value={selectedstepOption}
-                        className="basic-multi-select pt-3 text-right col-12"
-                        classNamePrefix="select"
-                        onChange={handleChangestep}
-                      />
-
+                      <div className={ selectedUsersOption?.value === 1 ?  'w-100 text-right' : 'd-none'} >
+                        <label className="mt-2" forhtml="fields">
+                          گام:
+                        </label>
+                        <Select
+                          options={stepOptions}
+                          placeholder=" گام"
+                          name="step"
+                          value={selectedstepOption}
+                          className="basic-multi-select pt-3 text-right col-12"
+                          classNamePrefix="select"
+                          onChange={handleChangestep}
+                        />
+                      </div>
                       <label className="mt-2" forhtml="fields">
                         توضیحات:
                       </label>
@@ -398,18 +405,29 @@ const AddTests = () => {
                       />
 
                       <button
-                        className="btn btn-outline-success w-25 "
+                        className="btn btn-outline-success w-25 col-2 m-auto"
                         type="submit"
                         disabled={butLoading ? true : false}
                       >
-                        {butLoading ? <BeatLoader color="green" loading={butLoading} size={8} css={butOverride} /> : <span>افزودن<i className="fas fa-plus mr-2"></i></span>}
-
+                        {butLoading ? (
+                          <BeatLoader
+                            color="green"
+                            loading={butLoading}
+                            size={8}
+                            css={butOverride}
+                          />
+                        ) : (
+                          <span>
+                            افزودن<i className="fas fa-plus mr-2"></i>
+                          </span>
+                        )}
                       </button>
                       <br></br>
                     </div>
                     <h3
-                      className={`${errorShow ? "d-block" : "d-none"
-                        } mt-3 text-center text-danger`}
+                      className={`${
+                        errorShow ? 'd-block' : 'd-none'
+                      } mt-3 text-center text-danger`}
                     >
                       لطفا تمام موارد را انتخاب کنید
                     </h3>

@@ -9,8 +9,10 @@ import Sidebar from "../Sidebar";
 import Navbar from "../Navbar";
 import { baseUrl } from "../../baseUrl";
 import { errorsCatch } from "../login/errorsCatch";
+import { useNavigate } from "react-router";
 
 const AddSubjects = () => {
+  const navigate = useNavigate()
   const [inputText, setInputText] = useState("");
   const [loading, setLoading] = useState(false);
   const [bookOptions, setBookOptions] = useState([]);
@@ -40,7 +42,7 @@ const AddSubjects = () => {
     baseUrl
       .get("/api/v1/subjects/create")
       .then((response) => {
-        const options = response.data.data.data.map((option) => {
+        const options = response.data.data.data?.map((option) => {
           return { value: option.id, label: option.name };
         });
         setBookOptions(options);
@@ -89,7 +91,7 @@ const AddSubjects = () => {
             icon: "success",
           }).then((response) => {
             setLoading(true);
-            setTimeout((window.location.pathname = "/subjects"), 2000);
+            setTimeout(navigate("/subjects"), 2000);
           });
         })
         .catch((err) => {

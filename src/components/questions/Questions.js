@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router";
 import { Link } from "react-router-dom";
 import { css } from "@emotion/react";
 import Sidebar from "../Sidebar";
@@ -14,6 +15,7 @@ import { errorsCatch } from "../login/errorsCatch";
 import Select from "react-select";
 
 const Questions = () => {
+  const navigate = useNavigate()
   let [loading, setLoading] = useState(true);
   let [tableLoading, settableLoading] = useState(false);
   const [items, setItems] = useState("");
@@ -55,14 +57,14 @@ const Questions = () => {
         setLoading(false);
         settableLoading(false);
 
-        const modalLessonItems = data[0].lesson.map((lessonitem) => {
+        const modalLessonItems = data[0].lesson?.map((lessonitem) => {
           return <tr>{lessonitem.name}</tr>;
         });
-        const modalFieldItems = data[0].field.map((fielditem) => {
+        const modalFieldItems = data[0].field?.map((fielditem) => {
           return <tr>{fielditem.name}</tr>;
         });
 
-        const items = data.map((item) => {
+        const items = data?.map((item) => {
           const trueOp = (x) => {
             switch (x) {
               case 'option_a':
@@ -81,12 +83,12 @@ const Questions = () => {
           }
           return (
             <tr key={item.id}>
-              <td scope="row">{item.id}</td>
-              <td scope="row">{item.subject.name}</td>
-              <td scope="row">{item.base.name}</td>
-              <td scope="row">{item.level.name}</td>
-              <td scope="row">{trueOp(item.true_option)}</td>
-              <td scope="row" className="text-left">
+              <td>{item.id}</td>
+              <td>{item.subject.name}</td>
+              <td>{item.base.name}</td>
+              <td>{item.level.name}</td>
+              <td>{trueOp(item.true_option)}</td>
+              <td className="text-left">
                 <button
                   id={item.id}
                   type="button"
@@ -137,12 +139,14 @@ const Questions = () => {
                         <p className="text-right text-dark">عکس سوال:</p>
                         <img
                           className="h-100 w-100"
-                          src={`https://panel.farostaha.com${item.question}`}
+                          src={`https://panel.farostaha.net${item.question}`}
+                          alt=''
                         />
                         <p className="text-right text-dark">عکس جواب:</p>
                         <img
                           className="h-100 w-100"
-                          src={`https://panel.farostaha.com${item.answer}`}
+                          src={`https://panel.farostaha.net${item.answer}`}
+                          alt=''
                         />
                       </div>
                     </div>
@@ -171,11 +175,12 @@ const Questions = () => {
       })
       .catch((err) => {
         console.log(err);
-        if (err.response.status == 401) {
-          window.location.href = '/'
+        if (err.response.status === 401) {
+          localStorage.clear()
+          navigate('/')
         }
-        if (err.response.status == 403) {
-          window.location.href = '/FourOThree'
+        if (err.response.status === 403) {
+          navigate('/FourOThree')
         }
       });
   }, [curentPage, searchItem]);
@@ -263,7 +268,7 @@ const Questions = () => {
                 text: "گزینه انتخابی شما پاک شد ",
                 icon: "success",
               }).then((response) => {
-                window.location.pathname = "/questions";
+                navigate("/questions") ;
               });
             })
             .catch((err) => {
@@ -335,7 +340,7 @@ const Questions = () => {
                 </Link>
               </nav>
 
-              <div className="container m-auto">
+              <div className=" m-auto">
                 <h2 className="text-center mt-3"> سوالات</h2>
 
                 <table className="table  table-hover rounded shadow text-right ">
@@ -359,7 +364,7 @@ const Questions = () => {
                       </th>
                     </tr>
                     {tableLoading ? (
-                      <tr scope="row">
+                      <tr>
                         <td colspan="2">
                           <BeatLoader
                             color="gray"

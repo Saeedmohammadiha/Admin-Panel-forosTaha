@@ -1,9 +1,12 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router";
 import { baseUrl } from "../../baseUrl";
 
 import { errorsCatch } from "./errorsCatch";
 
 const useForm = (validate , setLoading ) => {
+  const navigate = useNavigate()
+
   const [values, setValues] = useState({
     phone: "",
     password: "",
@@ -57,7 +60,7 @@ const useForm = (validate , setLoading ) => {
               "user",
               JSON.stringify(response.data.data.user)
             );
-            window.location.pathname = "/dashboard";
+            navigate("/dashboard");
           })
           .catch((err) => {
             errorsCatch(err.response.data);

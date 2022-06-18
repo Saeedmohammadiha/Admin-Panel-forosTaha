@@ -8,8 +8,10 @@ import "../../css/fileInput.css";
 import BeatLoader from "react-spinners/BeatLoader";
 import { css } from "@emotion/react";
 import { override } from "../../css/override";
+import { useNavigate } from "react-router";
 
 const AddQuestions = () => {
+  const navigate = useNavigate()
   let [loading, setLoading] = useState(false);
   const [selectedQuestionImage, setSelectedQuestionImage] = useState(null);
   const [imageUrlQuestion, setImageUrlQuestion] = useState(null);
@@ -66,32 +68,32 @@ const AddQuestions = () => {
       .get("/api/v1/questions/create")
       .then((response) => {
         const base = response.data.data.base;
-        const baseOption = base.map((baseitem) => {
+        const baseOption = base?.map((baseitem) => {
           return { value: baseitem.id, label: baseitem.name };
         });
         setBaseOptions(baseOption);
         const book = response.data.data.book;
-        const bookOption = book.map((bookitem) => {
+        const bookOption = book?.map((bookitem) => {
           return { value: bookitem.id, label: bookitem.name };
         });
         setBookOptions(bookOption);
         const field = response.data.data.field;
-        const fieldOption = field.map((fielditem) => {
+        const fieldOption = field?.map((fielditem) => {
           return { value: fielditem.id, label: fielditem.name };
         });
         setFieldOptions(fieldOption);
         const lesson = response.data.data.lesson;
-        const lessonOption = lesson.map((lessonitem) => {
+        const lessonOption = lesson?.map((lessonitem) => {
           return { value: lessonitem.id, label: lessonitem.name };
         });
         setlessonOptions(lessonOption);
         const subjects = response.data.data.subject;
-        const subjectsOption = subjects.map((subjectitem) => {
+        const subjectsOption = subjects?.map((subjectitem) => {
           return { value: subjectitem.id, label: subjectitem.name };
         });
         setSubjectOptions(subjectsOption);
         const levels = response.data.data.level;
-        const levelOption = levels.map((levelitem) => {
+        const levelOption = levels?.map((levelitem) => {
           return { value: levelitem.id, label: levelitem.name };
         });
         setLevelOptions(levelOption);
@@ -177,11 +179,11 @@ const AddQuestions = () => {
       selectedLessonOption &&
       selectedLevelOption
     ) {
-      const fieldData = selectedFieldOption.map((field) => {
+      const fieldData = selectedFieldOption?.map((field) => {
         return field.value;
       });
 
-      const lessonData = selectedLessonOption.map((lesson) => {
+      const lessonData = selectedLessonOption?.map((lesson) => {
         return lesson.value;
       });
       setErrorShow(false);
@@ -192,22 +194,25 @@ const AddQuestions = () => {
       formData.append("book_id", selectedBookOption.value ? selectedBookOption.value : null);
       formData.append("true_option", selectedCorrectAnswerOption.value ? selectedCorrectAnswerOption.value : null);
       formData.append("base_id", selectedBaseOption.value ? selectedBaseOption.value : null);
-      formData.append("field_id", fieldData? JSON.stringify(fieldData) : null);
-      formData.append("lesson_id",lessonData ? JSON.stringify(lessonData) : null);
+      formData.append("field_id", fieldData? fieldData : null);
+      formData.append("lesson_id",lessonData ? lessonData : null);
       formData.append("level_id", selectedLevelOption.value ? selectedLevelOption.value : null);
       setLoading(true);
       baseUrl
         .post("/api/v1/questions", formData)
         .then((response) => {
-          window.location.pathname = "/questions";
+          navigate("/questions")
+          setLoading(false);
         })
         .catch((err) => {
           errorsCatch(err.response.data);
           setButLoading(false)
+          setLoading(false);
         });
     } else {
       setErrorShow(true);
       setButLoading(false)
+      setLoading(false);
     }
   };
 
@@ -240,7 +245,7 @@ const AddQuestions = () => {
                 toggled={toggled}
                 setToggled={setToggled}
               />
-              <h5 className="text-right mb-2">افزودن سوالات</h5>
+              <h5 className="text-center mb-2">افزودن سوالات</h5>
               <div className="col-12 h-100 p-4 light rounded shadow bg-light">
                 <div className="form-container">
                   <form onSubmit={handleSubmit}>
@@ -393,7 +398,7 @@ const AddQuestions = () => {
                         onChange={handleChangeLevel}
                       />
                       <button
-                        className="btn btn-outline-success w-25 "
+                        className="btn btn-outline-success w-25 m-auto"
                         type="submit"
                         disabled={butLoading ? true : false}
                       >

@@ -9,8 +9,10 @@ import Sidebar from '../Sidebar'
 import Navbar from '../Navbar'
 import { baseUrl } from "../../baseUrl";
 import { errorsCatch } from "../login/errorsCatch";
+import { useNavigate } from "react-router";
 
 const AddMenu = () => {
+    const navigate = useNavigate()
     const [inputText, setInputText] = useState("");
     const [loading, setLoading] = useState(false);
     const [parentOptions, setParentOptions] = useState([])
@@ -37,22 +39,23 @@ text-align: center;
         baseUrl
             .get("/api/v1/menu/create").then((response) => {
                 const options = [{ value: '0', label: 'بدون والد' }]
-                const parents = response.data.data.data.map((parent) => {
+                const parents = response.data.data.data?.map((parent) => {
                     return { value: parent.id, label: parent.name }
                 })
                 const parentoptions = options.concat(parents)
                 setParentOptions(parentoptions)
-                const view = response.data.data.view.map((v) => {
+                const view = response.data.data.view?.map((v) => {
                     return { value: v, label: v }
                 })
                 setViewOptions(view)
                 setLoading(false)
             }).catch((err) => {
-                if (err.response.status == 401) {
-                    window.location.href = '/'
+                if (err.response.status === 401) {
+                    localStorage.clear()
+                    navigate('/')
                 }
-                if (err.response.status == 403) {
-                    window.location.href = '/FourOThree'
+                if (err.response.status === 403) {
+                    navigate('/FourOThree') 
                 }
             })
 
@@ -86,7 +89,7 @@ text-align: center;
                         icon: "success",
                     }).then((response) => {
                         setLoading(true);
-                        setTimeout((window.location.pathname = "/site/menu"), 2000);
+                        setTimeout(navigate("/menu"), 2000);
                     });
                 })
                 .catch((err) => {

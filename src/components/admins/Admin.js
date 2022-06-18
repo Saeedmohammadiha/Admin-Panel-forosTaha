@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router";
 import { Link } from "react-router-dom";
 import { override } from "../../css/override";
 import Sidebar from "../Sidebar";
@@ -13,6 +14,8 @@ import SearchInput from "./SearchInput";
 import { errorsCatch } from "../login/errorsCatch";
 
 const Admin = () => {
+    const navigate = useNavigate()
+
     let [loading, setLoading] = useState(true);
     let [tableLoading, settableLoading] = useState(false);
     const [items, setItems] = useState("");
@@ -55,9 +58,9 @@ const Admin = () => {
                 const items = data.map((item) => {
                     return (
                       <tr key={item.id}>
-                        <td scope="row">{item.name} {item.family}</td>
-                        <td scope="row">{item.phone}</td>
-                        <td scope="row" className="text-left">
+                        <td>{item.name} {item.family}</td>
+                        <td>{item.phone}</td>
+                        <td className="text-left">
                           <button
                             id={item.id}
                             className="btn btn btn-outline-danger m-1 my-2 my-sm-0"
@@ -80,11 +83,13 @@ const Admin = () => {
             })
             .catch((err) => {
                 console.log(err);
-                if (err.response.status == 401) {
-                    window.location.href = '/'
+                if (err.response.status === 401) {
+                    localStorage.clear()
+
+                   navigate('/')
                 }
-                if (err.response.status == 403) {
-                    window.location.href = '/FourOThree'
+                if (err.response.status === 403) {
+                   navigate('/FourOThree') 
                 }
             });
     }, [curentPage, searchItem]);
@@ -218,7 +223,7 @@ const Admin = () => {
                                 </Link>
                             </nav>
 
-                            <div className="container m-auto">
+                            <div className=" m-auto">
                                 <h2 className="text-center mt-3"> ادمین ها </h2>
                                 <table className="table  table-hover rounded shadow text-right ">
                                     <tbody>
@@ -230,7 +235,7 @@ const Admin = () => {
                                             </th>
                                         </tr>
                                         {tableLoading ? (
-                                            <tr scope="row">
+                                            <tr>
                                                 <td colspan="3">
                                                     <BeatLoader
                                                         color="gray"

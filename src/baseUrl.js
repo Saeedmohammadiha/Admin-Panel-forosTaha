@@ -8,7 +8,7 @@ axios.defaults.headers.common["Authorization"] = `Bearer ${localStorage.getItem(
 
 
 export const baseUrl = axios.create({
-  baseURL: "https://panel.farostaha.com/"
+  baseURL: "https://panel.farostaha.net/"
 });
 
 

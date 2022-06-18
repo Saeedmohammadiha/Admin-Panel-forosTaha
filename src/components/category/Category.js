@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { css } from "@emotion/react";
 import { errorsCatch } from "../login/errorsCatch";
-
+import { useNavigate } from "react-router";
 import { override } from "../../css/override";
 import Sidebar from "../Sidebar";
 import Navbar from "../Navbar";
@@ -13,6 +13,7 @@ import withReactContent from "sweetalert2-react-content";
 import BeatLoader from "react-spinners/BeatLoader";
 import { baseUrl } from "../../baseUrl";
 const Category = () => {
+    const navigate = useNavigate()
     let [loading, setLoading] = useState(true);
     let [tableLoading, settableLoading] = useState(false);
     const [items, setItems] = useState("");
@@ -72,9 +73,9 @@ const Category = () => {
             const myTable = data.map((row) => {
                 return (
                     <tr key={row.id}>
-                        <td scope="row">{row.name}</td>
-                        <td scope="row">{row.parent ? row.parent.name : 'بدون والد'}</td>
-                        <td scope="row" className="text-left">
+                        <td>{row.name}</td>
+                        <td>{row.parent ? row.parent.name : 'بدون والد'}</td>
+                        <td className="text-left">
                             <button
                                 id={row.id}
                                 className="btn btn btn-outline-danger m-1 my-2 my-sm-0"
@@ -84,7 +85,7 @@ const Category = () => {
                             </button>
                             <Link
                                 id={row.id}
-                                to={`/site/category/edit/${row.id}`}
+                                to={`/category/edit/${row.id}`}
                                 className="btn btn btn-outline-warning m-1 my-2 my-sm-0"
                             >
                                 ویرایش
@@ -96,11 +97,12 @@ const Category = () => {
             setItems(myTable)
             setLoading(false)
         }).catch((err) => {
-            if (err.response.status == 401) {
-                window.location.href = '/'
+            if (err.response.status === 401) {
+                localStorage.clear()
+                navigate('/')
             }
-            if (err.response.status == 403) {
-                window.location.href = '/FourOThree'
+            if (err.response.status === 403) {
+                navigate('/FourOThree') 
             }
                     })
     }, [searchItem , curentPage])
@@ -156,7 +158,7 @@ const Category = () => {
                                 text: "گزینه انتخابی شما پاک شد ",
                                 icon: "success",
                             }).then((response) => {
-                                window.location.pathname = "/site/category";
+                                navigate("/category") ;
                             });
                         })
                         .catch((err) => {
@@ -214,7 +216,7 @@ const Category = () => {
 
                                     </form>
                                     <Link
-                                        to={"/site/category/add"}
+                                        to={"/category/add"}
                                         className="btn btn-outline-success  my-2 my-sm-0"
                                         type="button"
                                     >
@@ -223,7 +225,7 @@ const Category = () => {
                                     </Link>
                                 </nav>
 
-                                <div className="container m-auto">
+                                <div className=" m-auto">
                                     <table className="table table-hover rounded shadow text-right mt-5">
                                         <tbody>
                                             <tr>
@@ -234,7 +236,7 @@ const Category = () => {
                                                 </th>
                                             </tr>
                                             {tableLoading ? (
-                                                <tr scope="row">
+                                                <tr>
                                                     <td colSpan="3">
                                                         <BeatLoader
                                                             color="gray"

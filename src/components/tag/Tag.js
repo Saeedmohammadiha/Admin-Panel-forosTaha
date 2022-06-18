@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { css } from "@emotion/react";
 import { errorsCatch } from "../login/errorsCatch";
-
+import { useNavigate } from "react-router";
 import { override } from "../../css/override";
 import Sidebar from "../Sidebar";
 import Navbar from "../Navbar";
@@ -13,6 +13,8 @@ import withReactContent from "sweetalert2-react-content";
 import BeatLoader from "react-spinners/BeatLoader";
 import { baseUrl } from "../../baseUrl";
 const Tag = () => {
+    const navigate = useNavigate()
+
     let [loading, setLoading] = useState(true);
     let [tableLoading, settableLoading] = useState(false);
     const [items, setItems] = useState("");
@@ -66,11 +68,11 @@ const Tag = () => {
             const data = response.data.data.data.data
             setTotalPage(response.data.data.data.total);
             settableLoading(false);
-            const myTable = data.map((row) => {
+            const myTable = data?.map((row) => {
                 return (
                     <tr key={row.id}>
-                        <td scope="row">{row.name}</td>
-                        <td scope="row" className="text-left">
+                        <td>{row.name}</td>
+                        <td className="text-left">
                             <button
                                 id={row.id}
                                 className="btn btn btn-outline-danger m-1 my-2 my-sm-0"
@@ -80,7 +82,7 @@ const Tag = () => {
                             </button>
                             <Link
                                 id={row.id}
-                                to={`/site/tag/edit/${row.id}`}
+                                to={`/tag/edit/${row.id}`}
                                 className="btn btn btn-outline-warning m-1 my-2 my-sm-0"
                             >
                                 ویرایش
@@ -92,11 +94,12 @@ const Tag = () => {
             setItems(myTable)
             setLoading(false)
         }).catch((err) => {
-            if (err.response.status == 401) {
-                window.location.href = '/'
+            if (err.response.status === 401) {
+                localStorage.clear()
+                navigate('/')
             }
-            if (err.response.status == 403) {
-                window.location.href = '/FourOThree'
+            if (err.response.status === 403) {
+                navigate('/FourOThree') 
             }
         })
     }, [searchItem, curentPage])
@@ -152,7 +155,7 @@ const Tag = () => {
                                 text: "گزینه انتخابی شما پاک شد ",
                                 icon: "success",
                             }).then((response) => {
-                                window.location.pathname = "/site/tag";
+                                navigate("/tag");
                             });
                         })
                         .catch((err) => {
@@ -210,7 +213,7 @@ const Tag = () => {
 
                                     </form>
                                     <Link
-                                        to={"/site/tag/add"}
+                                        to={"/tag/add"}
                                         className="btn btn-outline-success  my-2 my-sm-0"
                                         type="button"
                                     >
@@ -219,7 +222,7 @@ const Tag = () => {
                                     </Link>
                                 </nav>
 
-                                <div className="container m-auto">
+                                <div className="m-auto">
                                     <table className="table table-hover rounded shadow text-right mt-5">
                                         <tbody>
                                             <tr>

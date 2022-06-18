@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { override } from "../../css/override";
 
 import BeatLoader from "react-spinners/BeatLoader";
@@ -12,6 +12,8 @@ import { baseUrl } from "../../baseUrl";
 import { errorsCatch } from "../login/errorsCatch";
 
 const EditBases = () => {
+  const navigate = useNavigate()
+
   const params = useParams();
   const [inputText, setInputText] = useState();
   const [id, setId] = useState(params.id);
@@ -44,11 +46,12 @@ const EditBases = () => {
       })
       .catch((err) => {
         console.log(err.response);
-        if (err.response.status == 401) {
-          window.location.href = '/'
+        if (err.response.status === 401) {
+          localStorage.clear()
+          navigate('/')
         }
-        if (err.response.status == 403) {
-          window.location.href = '/FourOThree'
+        if (err.response.status === 403) {
+          navigate('/FourOThree')
         }
       });
   }, []);
@@ -85,7 +88,7 @@ const EditBases = () => {
             title: "ویرایش شد ",
             icon: "success",
           }).then((response) => {
-            setTimeout((window.location.pathname = "/bases"), 1000);
+            setTimeout(navigate("/bases"), 1000);
           });
         })
         .catch((err) => {

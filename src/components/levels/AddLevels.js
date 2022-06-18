@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { override } from "../../css/override";
-
+import { useNavigate } from "react-router";
 import BeatLoader from "react-spinners/BeatLoader";
 import { css } from "@emotion/react";
 import Swal from "sweetalert2";
@@ -11,6 +11,7 @@ import { baseUrl } from "../../baseUrl";
 import { errorsCatch } from "../login/errorsCatch";
 
 const AddLevels = () => {
+  const navigate = useNavigate()
   const [inputText, setInputText] = useState("");
   const [loading, setLoading] = useState(false);
   const [butLoading, setButLoading] = useState(false)
@@ -58,7 +59,7 @@ const AddLevels = () => {
             icon: "success",
           }).then((response) => {
             setLoading(true);
-            setTimeout((window.location.pathname = "/levels"), 2000);
+            setTimeout(navigate("/levels"), 2000);
           });
         })
         .catch((err) => {

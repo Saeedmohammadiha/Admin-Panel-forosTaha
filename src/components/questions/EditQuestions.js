@@ -8,11 +8,12 @@ import "../../css/fileInput.css";
 import BeatLoader from "react-spinners/BeatLoader";
 import { css } from "@emotion/react";
 import { override } from "../../css/override";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 
 const EditQuestions = () => {
+  const navigate = useNavigate()
   const params = useParams();
   const [id, setId] = useState(params.id);
   let [loading, setLoading] = useState(true);
@@ -66,32 +67,32 @@ const EditQuestions = () => {
       .get("/api/v1/questions/create")
       .then((response) => {
         const base = response.data.data.base;
-        const baseOption = base.map((baseitem) => {
+        const baseOption = base?.map((baseitem) => {
           return { value: baseitem.id, label: baseitem.name };
         });
         setBaseOptions(baseOption);
         const book = response.data.data.book;
-        const bookOption = book.map((bookitem) => {
+        const bookOption = book?.map((bookitem) => {
           return { value: bookitem.id, label: bookitem.name };
         });
         setBookOptions(bookOption);
         const field = response.data.data.field;
-        const fieldOption = field.map((fielditem) => {
+        const fieldOption = field?.map((fielditem) => {
           return { value: fielditem.id, label: fielditem.name };
         });
         setFieldOptions(fieldOption);
         const lesson = response.data.data.lesson;
-        const lessonOption = lesson.map((lessonitem) => {
+        const lessonOption = lesson?.map((lessonitem) => {
           return { value: lessonitem.id, label: lessonitem.name };
         });
         setlessonOptions(lessonOption);
         const subjects = response.data.data.subject;
-        const subjectsOption = subjects.map((subjectitem) => {
+        const subjectsOption = subjects?.map((subjectitem) => {
           return { value: subjectitem.id, label: subjectitem.name };
         });
         setSubjectOptions(subjectsOption);
         const levels = response.data.data.level;
-        const levelOption = levels.map((levelitem) => {
+        const levelOption = levels?.map((levelitem) => {
           return { value: levelitem.id, label: levelitem.name };
         });
         setLevelOptions(levelOption);
@@ -99,11 +100,12 @@ const EditQuestions = () => {
       })
       .catch((err) => {
         console.log(err.response);
-        if (err.response.status == 401) {
-          window.location.href = '/'
+        if (err.response.status === 401) {
+          localStorage.clear()
+          navigate('/')
         }
-        if (err.response.status == 403) {
-          window.location.href = '/FourOThree'
+        if (err.response.status === 403) {
+          navigate('/FourOThree') 
         }
       });
   }, []);
@@ -117,8 +119,8 @@ const EditQuestions = () => {
       .get(`/api/v1/questions/${id}/edit`)
       .then((response) => {
         const data = response.data.data.data;
-        setImageUrlQuestion(`https://panel.farostaha.com${data.question}`);
-        setImageUrlAnswer(`https://panel.farostaha.com${data.answer}`);
+        setImageUrlQuestion(`https://panel.farostaha.net${data.question}`);
+        setImageUrlAnswer(`https://panel.farostaha.net${data.answer}`);
         setSelectedBookOption({ value: data.book.id, label: data.book.name });
 
         setSelectedSubjectOption({
@@ -130,11 +132,11 @@ const EditQuestions = () => {
           value: data.level.id,
           label: data.level.name,
         });
-        const selectedFieldItem = data.field.map((item) => {
+        const selectedFieldItem = data.field?.map((item) => {
           return { value: item.id, label: item.name };
         });
         setSelectedFieldOption(selectedFieldItem);
-        const selectedLessonItem = data.lesson.map((lesson) => {
+        const selectedLessonItem = data.lesson?.map((lesson) => {
           return { value: lesson.id, label: lesson.name };
         });
         setSelectedLessonOption(selectedLessonItem);
@@ -241,11 +243,11 @@ const EditQuestions = () => {
       selectedLessonOption &&
       selectedLevelOption
     ) {
-      const fieldData = selectedFieldOption.map((field) => {
+      const fieldData = selectedFieldOption?.map((field) => {
         return field.value;
       });
 
-      const lessonData = selectedLessonOption.map((lesson) => {
+      const lessonData = selectedLessonOption?.map((lesson) => {
         return lesson.value;
       });
       setErrorShow(false);
@@ -256,8 +258,8 @@ const EditQuestions = () => {
       formData.append("book_id", selectedBookOption.value);
       formData.append("true_option", selectedCorrectAnswerOption.value);
       formData.append("base_id", selectedBaseOption.value);
-      formData.append("field_id", JSON.stringify(fieldData));
-      formData.append("lesson_id", JSON.stringify(lessonData));
+      formData.append("field_id", fieldData);
+      formData.append("lesson_id", lessonData);
       formData.append("level_id", selectedLevelOption.value);
       formData.append("_method", "PUT");
       setLoading(true);
@@ -273,7 +275,7 @@ const EditQuestions = () => {
             title: "ویرایش شد ",
             icon: "success",
           }).then((response) => {
-            setTimeout((window.location.pathname = "/questions"), 1000);
+            setTimeout(navigate("/questions"), 1000);
           });
         })
         .catch((err) => {
@@ -317,7 +319,7 @@ const EditQuestions = () => {
                 toggled={toggled}
                 setToggled={setToggled}
               />
-              <h5 className="text-right mb-2">افزودن سوالات</h5>
+              <h5 className="text-center mb-2">ویرایش سوالات</h5>
               <div className="col-12 h-100 p-4 light rounded shadow bg-light">
                 <div className="form-container">
                   <form onSubmit={handleSubmit}>

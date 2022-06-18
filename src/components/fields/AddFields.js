@@ -9,8 +9,10 @@ import Sidebar from "../Sidebar";
 import Navbar from "../Navbar";
 import { baseUrl } from "../../baseUrl";
 import { errorsCatch } from "../login/errorsCatch";
+import { useNavigate } from "react-router";
 
 const AddFields = () => {
+  const navigate = useNavigate()
   const [inputText, setInputText] = useState("");
   const [loading, setLoading] = useState(false);
   const [butLoading, setButLoading] = useState(false)
@@ -56,7 +58,7 @@ const AddFields = () => {
             icon: "success",
           }).then((response) => {
             setLoading(true);
-            setTimeout((window.location.pathname = "/fields"), 2000);
+            setTimeout(navigate("/fields"), 2000);
           });
         })
         .catch((err) => {

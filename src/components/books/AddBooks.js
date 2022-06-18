@@ -8,8 +8,11 @@ import Sidebar from "../Sidebar";
 import Navbar from "../Navbar";
 import { baseUrl } from "../../baseUrl";
 import { errorsCatch } from "../login/errorsCatch";
+import { useNavigate } from "react-router";
 
 const AddBooks = () => {
+  const navigate = useNavigate()
+
   const [inputText, setInputText] = useState("");
   const [loading, setLoading] = useState(false);
   const [butLoading, setButLoading] = useState(false)
@@ -63,7 +66,7 @@ const AddBooks = () => {
             icon: "success",
           }).then((response) => {
             setLoading(true);
-            setTimeout((window.location.pathname = "/books"), 2000);
+            setTimeout(navigate("/books"), 2000);
           });
         })
         .catch((err) => {

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { override } from "../../css/override";
 import BeatLoader from "react-spinners/BeatLoader";
 import { css } from "@emotion/react";
@@ -12,6 +12,7 @@ import { baseUrl } from "../../baseUrl";
 import { errorsCatch } from "../login/errorsCatch";
 
 const Editlessons = () => {
+  const navigate = useNavigate()
   const params = useParams();
   const [inputText, setInputText] = useState();
   const [id, setId] = useState(params.id);
@@ -79,11 +80,12 @@ const Editlessons = () => {
       })
       .catch((err) => {
         console.log(err);
-        if (err.response.status == 401) {
-          window.location.href = '/'
+        if (err.response.status === 401) {
+          localStorage.clear()
+          navigate('/')
         }
-        if (err.response.status == 403) {
-          window.location.href = '/FourOThree'
+        if (err.response.status === 403) {
+          navigate('/FourOThree') 
         }
       });
   }, []);
@@ -131,7 +133,7 @@ const Editlessons = () => {
             title: "ویرایش شد ",
             icon: "success",
           }).then((response) => {
-            setTimeout((window.location.pathname = "/lessons"), 1000);
+            setTimeout(navigate("/lessons"), 1000);
           });
         })
         .catch((err) => {

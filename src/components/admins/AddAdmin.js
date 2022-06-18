@@ -9,8 +9,11 @@ import Navbar from '../Navbar'
 import { baseUrl } from "../../baseUrl";
 import { errorsCatch } from "../login/errorsCatch";
 import Select from "react-select";
+import { useNavigate } from "react-router";
 
 const AddAdmin = () => {
+    const navigate = useNavigate()
+
     const [inputText, setInputText] = useState("");
     const [family, setFamily] = useState("");
     const [phone, setPhone] = useState("");
@@ -53,7 +56,13 @@ const AddAdmin = () => {
                 setRoleOption(options);
             })
             .catch((err) => {
-                console.log(err);
+                if (err.response.status === 401) {
+                    localStorage.clear()
+                    navigate('/')
+                  }
+                  if (err.response.status === 403) {
+                    navigate('/FourOThree') ;
+                  }
             });
     }, []);
 
@@ -97,7 +106,7 @@ const AddAdmin = () => {
                         icon: "success",
                     }).then((response) => {
                         setLoading(true);
-                        setTimeout((window.location.pathname = "/admin"), 2000);
+                        setTimeout(navigate("/admin") , 2000);
                     });
                 })
                 .catch((err) => {

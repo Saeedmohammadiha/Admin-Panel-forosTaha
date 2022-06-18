@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { override } from "../../css/override";
 import Select from "react-select";
 
@@ -13,6 +13,7 @@ import { baseUrl } from "../../baseUrl";
 import { errorsCatch } from "../login/errorsCatch";
 
 const EditMenu = () => {
+    const navigate = useNavigate()
     const params = useParams();
     const [inputText, setInputText] = useState();
     const [id, setId] = useState(params.id);
@@ -41,21 +42,22 @@ const EditMenu = () => {
         baseUrl
             .get("/api/v1/menu/create").then((response) => {
                 const options = [{ value: '0', label: 'بدون والد' }]
-                const parents = response.data.data.data.map((parent) => {
+                const parents = response.data.data.data?.map((parent) => {
                     return { value: parent.id, label: parent.name }
                 })
                 const parentoptions = options.concat(parents)
                 setParentOptions(parentoptions)
-                const view = response.data.data.view.map((v) => {
+                const view = response.data.data.view?.map((v) => {
                     return { value: v, label: v }
                 })
                 setViewOptions(view)
             }).catch((err) => {
-                if (err.response.status == 401) {
-                    window.location.href = '/'
+                if (err.response.status === 401) {
+                    localStorage.clear()
+                    navigate('/')
                 }
-                if (err.response.status == 403) {
-                    window.location.href = '/FourOThree'
+                if (err.response.status === 403) {
+                    navigate('/FourOThree') 
                 }
             })
 
@@ -69,7 +71,7 @@ const EditMenu = () => {
             .get(`/api/v1/menu/${id}/edit`)
             .then((response) => {
                 setInputText(response.data.data.data.name);
-                if (response.data.data.data.parent_id == 0) {
+                if (response.data.data.data.parent_id === 0) {
                     setSelectedParentOption({ value: '0', label: 'بدون والد' })
 
                 } else {
@@ -94,11 +96,11 @@ const EditMenu = () => {
 
             })
             .catch((err) => {
-                if (err.response.status == 401) {
-                    window.location.href = '/'
+                if (err.response.status === 401) {
+                    navigate('/')
                 }
-                if (err.response.status == 403) {
-                    window.location.href = '/FourOThree'
+                if (err.response.status === 403) {
+                    navigate('/FourOThree') 
                 }
             });
     }, []);
@@ -137,7 +139,7 @@ const EditMenu = () => {
                         title: "ویرایش شد ",
                         icon: "success",
                     }).then((response) => {
-                        setTimeout((window.location.pathname = "/site/menu"), 2000);
+                        setTimeout(navigate("/menu"), 2000);
                     });
                 })
                 .catch((err) => {

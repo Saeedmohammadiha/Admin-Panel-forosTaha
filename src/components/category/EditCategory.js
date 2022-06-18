@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { override } from "../../css/override";
 import Select from "react-select";
 import BeatLoader from "react-spinners/BeatLoader";
@@ -12,6 +12,7 @@ import { baseUrl } from "../../baseUrl";
 import { errorsCatch } from "../login/errorsCatch";
 
 const EditCategory = () => {
+    const navigate = useNavigate()
     const params = useParams();
     const [inputText, setInputText] = useState();
     const [id, setId] = useState(params.id);
@@ -45,11 +46,12 @@ const EditCategory = () => {
                 const parentoptions = options.concat(parents)
                 setParentOptions(parentoptions)
             }).catch((err) => {
-                if (err.response.status == 401) {
-                    window.location.href = '/'
+                if (err.response.status === 401) {
+                    localStorage.clear()
+                    navigate('/')
                 }
-                if (err.response.status == 403) {
-                    window.location.href = '/FourOThree'
+                if (err.response.status === 403) {
+                   navigate('/FourOThree') 
                 }
             })
 
@@ -109,7 +111,7 @@ const EditCategory = () => {
                         title: "ویرایش شد ",
                         icon: "success",
                     }).then((response) => {
-                        setTimeout((window.location.pathname = "/site/category"), 2000);
+                        setTimeout(navigate("/category"), 2000);
                     });
                 })
                 .catch((err) => {

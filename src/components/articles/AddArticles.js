@@ -11,10 +11,13 @@ import { baseUrl } from "../../baseUrl";
 import { errorsCatch } from "../login/errorsCatch";
 import MyEditor from "../../MyEditor";
 import "../../css/fileInput.css";
+import { useNavigate } from "react-router";
 
 
 
 const AddArticles = () => {
+    const navigate = useNavigate()
+
     const [inputText, setInputText] = useState("");
     const [inputTextRateValue, setInputTextRateValue] = useState("");
     const [latin, setLatin] = useState()
@@ -100,11 +103,12 @@ const AddArticles = () => {
                 })
                 setTagOptions(tag)
             }).catch((err) => {
-                if (err.response.status == 401) {
-                    window.location.href = '/'
+                if (err.response.status === 401) {
+                    localStorage.clear()
+                    navigate('/')
                 }
-                if (err.response.status == 403) {
-                    window.location.href = '/FourOThree'
+                if (err.response.status === 403) {
+                   navigate('/FourOThree') 
                 }
             })
 
@@ -122,10 +126,6 @@ const AddArticles = () => {
         }
     }, [selectedImage]);
 
-
-// const handleButLoad =()=>{
-//     setButLoading(true)
-// }
 
 
     /**
@@ -151,7 +151,7 @@ const AddArticles = () => {
                 return category.value
             })
 
-            const formData = new FormData;
+            const formData = new FormData();
             formData.append("title", inputText);
             formData.append("latin", latin);
             formData.append("rate", selectedRateOption.value ? selectedRateOption.value : 0);
@@ -176,7 +176,7 @@ const AddArticles = () => {
                     }).then((response) => {
                         setLoading(true);
                         setButLoading(false)
-                        setTimeout((window.location.pathname = "/site/articles"), 2000);
+                        setTimeout(()=>{navigate("/articles")}, 2000);
                     });
                 })
                 .catch((err) => {
@@ -255,6 +255,7 @@ const AddArticles = () => {
                                         value={latin}
                                         onChange={(e) => setLatin(e.target.value)}
                                     />
+                                    
                                     <Select
                                         options={rateOptions}
                                         name="rate"
@@ -337,6 +338,7 @@ const AddArticles = () => {
                                                 setEditor(data);
                                             }}
                                             data={editor}
+                                            API_URL = "/api/v1/article/upload-image"
                                         />
                                     </div>
 

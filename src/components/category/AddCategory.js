@@ -9,8 +9,10 @@ import Sidebar from '../Sidebar'
 import Navbar from '../Navbar'
 import { baseUrl } from "../../baseUrl";
 import { errorsCatch } from "../login/errorsCatch";
+import { useNavigate } from "react-router";
 
 const AddCategory = () => {
+    const navigate = useNavigate()
     const [inputText, setInputText] = useState("");
     const [loading, setLoading] = useState(false);
     const [parentOptions, setParentOptions] = useState([])
@@ -46,11 +48,12 @@ const AddCategory = () => {
                 setParentOptions(parentoptions)
 
             }).catch((err) => {
-                if (err.response.status == 401) {
-                    window.location.href = '/'
+                if (err.response.status === 401) {
+                    localStorage.clear()
+                    navigate('/')
                 }
-                if (err.response.status == 403) {
-                    window.location.href = '/FourOThree'
+                if (err.response.status === 403) {
+                    navigate('/FourOThree') 
                 }
             })
 
@@ -84,7 +87,7 @@ const AddCategory = () => {
                         icon: "success",
                     }).then((response) => {
                         setLoading(true);
-                        setTimeout((window.location.pathname = "/site/category"), 2000);
+                        setTimeout(navigate("/category"), 2000);
                     });
                 })
                 .catch((err) => {

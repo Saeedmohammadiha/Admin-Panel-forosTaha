@@ -1,26 +1,28 @@
-import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import { override } from "../../css/override";
-import Sidebar from "../Sidebar";
-import Navbar from "../Navbar";
-import { css } from "@emotion/react";
-import BeatLoader from "react-spinners/BeatLoader";
-import { baseUrl } from "../../baseUrl";
-import Swal from "sweetalert2";
-import withReactContent from "sweetalert2-react-content";
-import ReactPaginate from "react-paginate";
-import SearchInput from "./SearchInput";
-import { errorsCatch } from "../login/errorsCatch";
+import React, { useState, useEffect } from 'react';
+import { Navigate, useNavigate } from 'react-router';
+import { Link } from 'react-router-dom';
+import { override } from '../../css/override';
+import Sidebar from '../Sidebar';
+import Navbar from '../Navbar';
+import { css } from '@emotion/react';
+import BeatLoader from 'react-spinners/BeatLoader';
+import { baseUrl } from '../../baseUrl';
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
+import ReactPaginate from 'react-paginate';
+import SearchInput from './SearchInput';
+import { errorsCatch } from '../login/errorsCatch';
 
 const Bases = () => {
+  const navigate = useNavigate();
+
   let [loading, setLoading] = useState(true);
   let [tableLoading, settableLoading] = useState(false);
-  const [items, setItems] = useState("");
-  const [search, setSearch] = useState("");
-  const [searchItem, setSearchItem] = useState("");
-  const [curentPage, setCurentPage] = useState("1");
-  const [totalPage, setTotalPage] = useState("");
-
+  const [items, setItems] = useState('');
+  const [search, setSearch] = useState('');
+  const [searchItem, setSearchItem] = useState('');
+  const [curentPage, setCurentPage] = useState('1');
+  const [totalPage, setTotalPage] = useState('');
 
   /**
    * controling the collapse and toggle in sidebar
@@ -52,11 +54,11 @@ const Bases = () => {
         setTotalPage(response.data.data.data.total);
         setLoading(false);
         settableLoading(false);
-        const items = data.map((item) => {
+        const items = data?.map((item) => {
           return (
             <tr key={item.id}>
-              <td scope="row">{item.name}</td>
-              <td scope="row" className="text-left">
+              <td>{item.name}</td>
+              <td className="text-left">
                 <button
                   id={item.id}
                   className="btn btn btn-outline-danger m-1 my-2 my-sm-0"
@@ -66,7 +68,7 @@ const Bases = () => {
                 </button>
                 <Link
                   id={item.id}
-                  to={`/Bases/edit/${item.id}`}
+                  to={`/bases/edit/${item.id}`}
                   className="btn btn btn-outline-warning m-1 my-2 my-sm-0"
                 >
                   ویرایش
@@ -79,11 +81,12 @@ const Bases = () => {
       })
       .catch((err) => {
         console.log(err);
-        if (err.response.status == 401) {
-          window.location.href = '/'
+        if (err.response.status === 401) {
+          localStorage.clear()
+          navigate('/');
         }
-        if (err.response.status == 403) {
-          window.location.href = '/FourOThree'
+        if (err.response.status === 403) {
+          navigate('/FourOThree');
         }
       });
   }, [curentPage, searchItem]);
@@ -128,18 +131,18 @@ const Bases = () => {
     const MySwal = withReactContent(Swal);
     const swalWithBootstrapButtons = Swal.mixin({
       customClass: {
-        confirmButton: "btn btn-success",
-        cancelButton: "btn btn-danger",
+        confirmButton: 'btn btn-success',
+        cancelButton: 'btn btn-danger',
       },
       buttonsStyling: false,
     });
     swalWithBootstrapButtons
       .fire({
-        title: "آیا مطمئن هستید؟",
-        icon: "warning",
+        title: 'آیا مطمئن هستید؟',
+        icon: 'warning',
         showCancelButton: true,
-        confirmButtonText: "آره، پاک کن",
-        cancelButtonText: "نه ",
+        confirmButtonText: 'آره، پاک کن',
+        cancelButtonText: 'نه ',
         reverseButtons: true,
       })
       .then((result) => {
@@ -149,12 +152,12 @@ const Bases = () => {
             .then((response) => {
               settableLoading(true);
               MySwal.fire({
-                confirmButtonText: "باشه",
-                title: "!پاک شد ",
-                text: "گزینه انتخابی شما پاک شد ",
-                icon: "success",
+                confirmButtonText: 'باشه',
+                title: '!پاک شد ',
+                text: 'گزینه انتخابی شما پاک شد ',
+                icon: 'success',
               }).then((response) => {
-                window.location.pathname = "/bases";
+               navigate('/bases')
               });
             })
             .catch((err) => {
@@ -162,9 +165,9 @@ const Bases = () => {
             });
         } else if (result.dismiss === Swal.DismissReason.cancel) {
           MySwal.fire({
-            title: "کنسل شد",
-            confirmButtonText: "باشه",
-            icon: "error",
+            title: 'کنسل شد',
+            confirmButtonText: 'باشه',
+            icon: 'error',
           });
         }
       });
@@ -182,7 +185,7 @@ const Bases = () => {
     } else {
       return (
         <>
-          <div className="d-flex">
+          <div className="d-flex" style={{ height: '100vh' }}>
             <Sidebar
               handleToggleSidebar={handleToggleSidebar}
               collapse={collapse}
@@ -208,7 +211,7 @@ const Bases = () => {
                   </button>
                 </form>
                 <Link
-                  to={"/bases/add"}
+                  to={'/bases/add'}
                   className="btn btn-outline-success  my-2 my-sm-0"
                   type="button"
                 >
@@ -217,7 +220,7 @@ const Bases = () => {
                 </Link>
               </nav>
 
-              <div className="container m-auto">
+              <div className=" m-auto">
                 <h2 className="text-center mt-3">پایه های تحصیلی</h2>
                 <table className="table  table-hover rounded shadow text-right ">
                   <tbody>
@@ -228,7 +231,7 @@ const Bases = () => {
                       </th>
                     </tr>
                     {tableLoading ? (
-                      <tr scope="row">
+                      <tr>
                         <td colspan="2">
                           <BeatLoader
                             color="gray"

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { override } from "../../css/override";
 import { css } from "@emotion/react";
 import Select from "react-select";
@@ -14,6 +14,8 @@ import MyEditor from "../../MyEditor";
 
 
 const EditArticles = () => {
+    const navigate = useNavigate()
+
     const params = useParams();
     const [id, setId] = useState(params.id);
     const [inputText, setInputText] = useState("");
@@ -130,16 +132,17 @@ const EditArticles = () => {
                     }
                 }
                 setSelectedRateOption(rate(data.rate))
-                setImageUrl(`https://panel.farostaha.com${data.image}`)
+                setImageUrl(`https://panel.farostaha.net${data.image}`)
                 setLoading(false);
             })
             .catch((err) => {
                 console.log(err);
-                if (err.response.status == 401) {
-                    window.location.href = '/'
+                if (err.response.status === 401) {
+                    localStorage.clear()
+                    navigate('/')
                 }
-                if (err.response.status == 403) {
-                    window.location.href = '/FourOThree'
+                if (err.response.status === 403) {
+                    navigate('/FourOThree') 
                 }
             });
     }, []);
@@ -177,7 +180,7 @@ const EditArticles = () => {
             const categories = selectedCategoryOption.map((category) => {
                 return category.value
             })
-            const formData = new FormData;
+            const formData = new FormData();
             formData.append("title", inputText);
             formData.append("latin", latin);
             formData.append("rate", selectedRateOption.value ? selectedRateOption.value : 0);
@@ -199,7 +202,7 @@ const EditArticles = () => {
                         title: "ویرایش شد ",
                         icon: "success",
                     }).then((response) => {
-                        setTimeout((window.location.pathname = "/site/articles"), 2000);
+                        setTimeout((window.location.pathname = "/articles"), 2000);
                     });
                 })
                 .catch((err) => {
@@ -361,7 +364,7 @@ const EditArticles = () => {
                                             {imageUrl && (
                                                 <img
                                                     src={imageUrl}
-
+alt=''
                                                     className="h-100 w-50"
                                                 />
                                             )}
@@ -389,6 +392,7 @@ const EditArticles = () => {
                                                 setEditor(data);
                                             }}
                                             data={editor}
+                                            API_URL = "/api/v1/article/upload-image"
                                         />
                                     </div>
 

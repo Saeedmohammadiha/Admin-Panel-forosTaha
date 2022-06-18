@@ -9,8 +9,10 @@ import Navbar from '../Navbar'
 import { baseUrl } from "../../baseUrl";
 import { errorsCatch } from "../login/errorsCatch";
 import Select from "react-select";
+import { useNavigate } from "react-router";
 
 const AddRole = () => {
+    const navigate = useNavigate()
     const [inputText, setInputText] = useState("");
     const [label, setLabel] = useState("");
     const [loading, setLoading] = useState(false);
@@ -43,13 +45,20 @@ const AddRole = () => {
         baseUrl
             .get("/api/v1/role/create")
             .then((response) => {
-                const options = response.data.data.data.map((option) => {
+                const options = response.data.data.data?.map((option) => {
                     return { value: option.id, label: option.name };
                 });
                 setPermissionOption(options);
             })
             .catch((err) => {
                 console.log(err);
+                if (err.response.status === 401) {
+                    localStorage.clear()
+                    navigate('/')
+                }
+                if (err.response.status === 403) {
+                   navigate('/FourOThree')
+                }
             });
     }, []);
 
@@ -79,7 +88,7 @@ const AddRole = () => {
                 setButLoading(false)
             })
         } else {
-            const permissions = selectedOption.map((permission) => {
+            const permissions = selectedOption?.map((permission) => {
                 return permission.value
             })
             baseUrl
@@ -92,7 +101,7 @@ const AddRole = () => {
                         icon: "success",
                     }).then((response) => {
                         setLoading(true);
-                        setTimeout((window.location.pathname = "/role"), 2000);
+                        setTimeout(navigate("/role"), 2000);
                     });
                 })
                 .catch((err) => {
